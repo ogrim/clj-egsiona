@@ -16,13 +16,8 @@
 (defn get-db [] @*db*)
 
 (defn create-tables []
-  (do (try (sql/with-connection @*db*
-          (sql/create-table "tagged"
-                            [:id :text "PRIMARY KEY"]
-                            [:artikkel :text]))
-        (catch Exception e (println e)))
-      (try (sql/with-connection @*db*
-         (sql/create-table "location"
+  (try (sql/with-connection @*db*
+         (sql/create-table "tagged"
                            [:id :text "PRIMARY KEY"]
-                           [:location :text]))
-       (catch Exception e (println e)))))
+                           [:artikkel :text]))
+       (catch Exception e (println e))))

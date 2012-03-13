@@ -2,16 +2,12 @@
   (:require [clj-obt.tools :as obt]
             [clj-egsiona.tagger-provider :as tag]
             [clj-egsiona.db-provider :as db]
-            [clj-egsiona.geocode :as geo]
             [clojure.string :as str]
             [clj-egsiona.processing :as p])
-  (:use [ogrim.common.tools]
-        [clj-egsiona address country name
-         profession domain entity]))
+  (:use [ogrim.common.tools]))
 
 (defn set-db [db-spec]
   (do (db/set-db db-spec)
-      (geo/reset-db)
       (tag/reset-db)
       true))
 

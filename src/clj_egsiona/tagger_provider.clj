@@ -3,7 +3,7 @@
             [ogrim.common.db :as db]
             [clojure.java.jdbc :as sql]
             [clj-http.client :as client]
-            [ring.util.codec :as r])
+            [clj-http.util :as util])
   (:use [ogrim.common tools downloader]
         [clj-egsiona.db-provider]))
 
@@ -12,21 +12,30 @@
 
 (defn set-obt-program [location]
   (do (obt/set-obt-path! location)
-      (reset! local? true)))
+      (reset! local? true)
+      true))
 
 (defn set-obt-service [location]
-  (do (reset! service-url (str "http://" location "/text/?data="))
-      (reset! local? false)))
+  (do (reset! service-url (str "http://" location "/text"))
+      (reset! local? false)
+      true))
 
-(defn process-vector [v] (str \[ (apply str (map #(str \" % \") v)) \]))
+(defn- process-vector [v] (str \[ (apply str (map #(str \" % \") v)) \]))
 
-(defn service-tag [s]
-  (-> (str @service-url (r/url-encode s))
-      (client/get {:as "ISO-8859-1"})
+(defn- post-tag [s]
+  (client/post @service-url
+               {:body (str "data=" s)
+                :content-type "application/x-www-form-urlencoded"
+                :as "ISO-8859-1"}))
+
+(defn- service-tag [s]
+  (-> s
+      util/url-encode
+      post-tag
       :body
       read-string))
 
-(defn dispatch-tagger [s]
+(defn- dispatch-tagger [s]
   (cond @local? (obt/obt-tag s)
         (false? @local?) (if (vector? s) (service-tag (process-vector s)) (service-tag s))
         :else (throw (Exception. "OBT is not configured"))))

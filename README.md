@@ -11,15 +11,15 @@ Through development, this project was evaluated whith a corpus of 113 articles r
 
 `clj-egsiona` is on [Clojars](https://clojars.org/clj-egsiona).
 
-    [clj-egsiona "0.1.0-SNAPSHOT"]
+    [clj-egsiona "0.1.1]
 
 At the very least you need to configure OBT, but it's recommended to use a database for caching.
 
-In `clj-egsiona.core` you need to configure the Oslo-Bergen-Tagger:
+In `clj-egsiona.core` to use a local OBT installation:
 
     (set-obt "/home/ogrim/bin/The-Oslo-Bergen-Tagger")
 
-to use a local OBT installation. To use the web service as hosted by `clj-obt-service`:
+To use the web service as hosted by `clj-obt-service`:
 
     (set-obt "10.0.0.2:8085")
 
@@ -37,7 +37,7 @@ Or if you are using SQLite, it will look like this:
              :subprotocol "sqlite"
              :subname     "database.db"})
 
-If it is the first time using the database, there is a function to create the required tables:
+If it is the first time using the database, there is a function to create the required table:
 
     (create-tables)
 
@@ -53,7 +53,9 @@ If you want better granularity, use `process-locations` to get more data:
 
     (process-locations "Vennligst finn ut om Stavanger eller Sandnes er lokasjoner. De er begge byer i Rogaland.")
 
-    => {:address ("Sandnes"), :counties ("rogaland"), :countries (), :regions (), :eu-route (), :grammar ({:tags ["subst" "prop" "<*>"], :lemma "Stavanger", :word "Stavanger", :i 5} {:tags ["subst" "prop" "<*land>" "<*>"], :lemma "Rogaland", :word "Rogaland", :i 16})}
+    => {:address ("Sandnes"), :counties ("rogaland"), :countries (), :regions (), :eu-route (),
+        :grammar ({:tags ["subst" "prop" "<*>"], :lemma "Stavanger", :word "Stavanger", :i 5}
+                  {:tags ["subst" "prop" "<*land>" "<*>"], :lemma "Rogaland", :word "Rogaland", :i 16})}
 
 ## License
 
