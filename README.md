@@ -23,7 +23,7 @@ To use the web service as hosted by `clj-obt-service`:
 
     (set-obt "10.0.0.2:8085")
 
-A database is used for persistence of tagged texts and geocoder lookup. In `clj-egsiona.core` use `set-db` to configure database settings. No special stuff is done, so you can use SQLite, PostgreSQL, MySQL, etc. PostgreSQL configuration will look like this:
+A database is used for persistence of tagged texts. In `clj-egsiona.core` use `set-db` to configure database settings. No special stuff is done, so you can use SQLite, PostgreSQL, MySQL, etc. PostgreSQL configuration will look like this:
 
     (set-db {:classname "org.postgresql.Driver"
              :subprotocol "postgresql"
