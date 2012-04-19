@@ -11,7 +11,7 @@ Through development, this project was evaluated whith a corpus of 113 articles r
 
 `clj-egsiona` is on [Clojars](https://clojars.org/clj-egsiona).
 
-    [clj-egsiona "0.1.1]
+    [clj-egsiona "0.1.3]
 
 At the very least you need to configure OBT, but it's recommended to use a database for caching.
 
