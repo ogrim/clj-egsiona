@@ -11,7 +11,7 @@ Through development, this project was evaluated whith a corpus of 113 articles r
 
 `clj-egsiona` is on [Clojars](https://clojars.org/clj-egsiona).
 
-    [clj-egsiona "0.1.3]
+    [clj-egsiona "0.1.4]
 
 At the very least you need to configure OBT, but it's recommended to use a database for caching.
 
@@ -28,7 +28,7 @@ A database is used for persistence of tagged texts. In `clj-egsiona.core` use `s
     (set-db {:classname "org.postgresql.Driver"
              :subprotocol "postgresql"
              :subname  "//localhost:5432/database-name"
-             :user "postgres"
+             :user "username"
              :password "password"})
 
 Or if you are using SQLite, it will look like this:

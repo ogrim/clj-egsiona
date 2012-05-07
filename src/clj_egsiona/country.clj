@@ -36,7 +36,7 @@
   (pattern-in s p-municipalities))
 
 (defn find-directions [s]
-  (pattern-in s p-municipalities))
+  (pattern-in s p-direction))
 
 (defn- string-in? [s re-patterns]
   (let [sl (.toLowerCase s)]
