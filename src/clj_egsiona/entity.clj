@@ -9,7 +9,7 @@
 
 (def ^{:private true} irregular
   ["mann" "mannen" "menn" "mennene"
-   "senter" "senteret" "setre" "sentrene"])
+   "senter" "senteret" "sentre" "sentrene"])
 
 (def ^{:private true} han
   ["avtale" "konvensjon" "restaurant" "skoleplass" "byggeplass" "barnehage"
