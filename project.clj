@@ -1,7 +1,9 @@
-(defproject clj-egsiona "0.1.4"
+(defproject clj-egsiona "0.1.0-SNAPSHOT"
   :description "A Clojure library for detecting locations in Norwegian texts"
-  :url "https://github.com/ogrim/clj-egsiona"
   :dependencies [[org.clojure/clojure "1.3.0"]
-                 [clj-obt "0.3.6"]
-                 [org.clojure/java.jdbc "0.1.4"]
-                 [clj-http "0.3.6"]])
+                 [clj-obt "0.3.5"]
+                 [org.clojure/java.jdbc "0.0.6"]
+                 [postgresql "9.0-801.jdbc4"]
+                 [enlive "1.0.0"]
+                 [geocoder-clj "0.0.6-SNAPSHOT"]
+                 [clj-time "0.3.4"]])

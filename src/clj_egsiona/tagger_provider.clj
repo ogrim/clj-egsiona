@@ -1,79 +1,40 @@
 (ns clj-egsiona.tagger-provider
   (:require [clj-obt.core :as obt]
             [ogrim.common.db :as db]
-            [clojure.java.jdbc :as sql]
-            [clj-http.client :as client]
-            [clj-http.util :as util])
-  (:use [ogrim.common tools downloader]
+            [clojure.java.jdbc :as sql])
+  (:use [ogrim.common.tools]
         [clj-egsiona.db-provider]))
 
-(def ^{:private true} local? (atom nil))
-(def ^{:private true} service-url (atom nil))
+(obt/set-obt-path! "/home/ogrim/bin/The-Oslo-Bergen-Tagger")
 
-(defn set-obt-program [location]
-  (do (obt/set-obt-path! location)
-      (reset! local? true)
-      true))
-
-(defn set-obt-service [location]
-  (do (reset! service-url (str "http://" location "/text"))
-      (reset! local? false)
-      true))
-
-(defn- process-vector [v] (str \[ (apply str (map #(str \" % \") v)) \]))
-
-(defn- post-tag [s]
-  (client/post @service-url
-               {:body (str "data=" s)
-                :content-type "application/x-www-form-urlencoded"
-                :as "ISO-8859-1"}))
-
-(defn- service-tag [s]
-  (-> s
-      util/url-encode
-      post-tag
-      :body
-      read-string))
-
-(defn- dispatch-tagger [s]
-  (cond @local? (obt/obt-tag s)
-        (false? @local?) (if (vector? s) (service-tag (process-vector s)) (service-tag s))
-        :else (throw (Exception. "OBT is not configured"))))
-
-(def ^{:dynamic true :private true}  *db* (atom (get-db)))
-
-(defn reset-db []
-  (reset! *db* (get-db)))
+(def ^{:dynamic true :private true}  *db* (get-db))
 
 (defn- hash->article [hash]
-  (if (nil? @*db*) nil
-   (let [[article] (db/query-db @*db* ["SELECT * FROM tagged WHERE id = ?" hash])]
-     (:artikkel article))))
+  (let [[article] (db/query-db *db* ["SELECT * FROM artikler.tagged WHERE id = ?" hash])]
+    (:artikkel article)))
 
 (defn- persist-parsed [hash parsed]
-  (cond (nil? @*db*) nil
-        (empty? (hash->article hash))
-        (do (db/insert-row @*db* "tagged" [hash (str parsed)])
-            true)))
+  (if (empty? (hash->article hash))
+    (do (db/insert-row *db* "artikler.tagged" [hash (str parsed)])
+        true)))
 
 (defn- tag-text-persistence
   "Provides the extended TaggerProtocol to users"
   [s]
-  (if (nil? @*db*) (dispatch-tagger s)
-   (let [hash (sha s)
-         article (hash->article hash)]
-     (if (seq article)
-       (read-string article)
-       (let [parsed (dispatch-tagger s)]
-         (do (persist-parsed hash parsed)
-             parsed))))))
+  (let [hash (sha s)
+        article (hash->article hash)]
+    (if (seq article)
+      (read-string article)
+      (let [parsed (obt/obt-tag s)]
+        (do (persist-parsed hash parsed)
+            parsed)))))
 
 (defn- tag-multiple-persistence [strings]
   (let [hashes (map sha strings)
         articles (map hash->article hashes)
         tag-these (filter #(-> (sha %) (hash->article) (string?) (not)) strings)]
     (if (empty? tag-these) (map read-string articles)
-     (loop [[current & more :as tag-result] (dispatch-tagger tag-these)
+     (loop [[current & more :as tag-result] (obt/obt-tag tag-these)
             [tagged & tmore] articles
             [hash & hmore] hashes
             acc []]
@@ -103,3 +64,10 @@
   clojure.lang.LazySeq
   (tag-text [s]
     (tag-multiple-dispatcher s)))
+
+(defn- create-table []
+  (try (sql/with-connection *db*
+         (sql/create-table "artikler.tagged"
+                           [:id :text "PRIMARY KEY"]
+                           [:artikkel :text]))
+       (catch Exception e (println e))))

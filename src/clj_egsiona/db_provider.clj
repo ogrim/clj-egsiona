@@ -1,5 +1,4 @@
-(ns clj-egsiona.db-provider
-  (:require [clojure.java.jdbc :as sql]))
+(ns clj-egsiona.db-provider)
 
 (def ^{:dynamic true :private true}
   *db*
@@ -8,16 +7,14 @@
 (defn set-db [db]
   (reset! *db* db))
 
-(comment (defn get-db []
-   (if (seq @*db*)
-     @*db*
-     (throw (Exception. "database settings not set")))))
+(defn get-db []
+  (if (seq @*db*)
+    @*db*
+    (throw (Exception. "database settings not set"))))
 
-(defn get-db [] @*db*)
-
-(defn create-tables []
-  (try (sql/with-connection @*db*
-         (sql/create-table "tagged"
-                           [:id :text "PRIMARY KEY"]
-                           [:artikkel :text]))
-       (catch Exception e (println e))))
+(set-db
+  {:classname   "org.postgresql.Driver"
+   :subprotocol "postgresql"
+   :subname  "//localhost:5432/norge-digitalt"
+   :user "postgres"
+   :password "babbafet"})
